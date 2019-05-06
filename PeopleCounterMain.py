@@ -29,7 +29,7 @@ def testIntersectionOut(x, y):
 
 
 if __name__ == "__main__":
-    camera = cv2.VideoCapture("rtsp://192.168.50.121:8554/unicast")
+    camera = cv2.VideoCapture("test2.mp4")
 
     firstFrame = None
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
 
         # Flip frame
         # frame = frame[::-1]
-        frame = cv2.flip(frame, -1)
+        # frame = cv2.flip(frame, -1)
 
         # resize the frame, convert it to grayscale, and blur it
         frame = imutils.resize(frame, width=width)
@@ -68,10 +68,9 @@ if __name__ == "__main__":
         # dilate the thresholded image to fill in holes, then find contours
         # on thresholded image
         thresh = cv2.dilate(thresh, None, iterations=2)
-        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        cnts = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[1]
         # loop over the contours
         for c in cnts:
-            print(c)
             # if the contour is too small, ignore it
             if cv2.contourArea(c) < 1500:
                 continue
