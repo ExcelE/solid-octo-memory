@@ -75,5 +75,16 @@ sudo python3 setup.py install --cpp_implementation
 sudo sh -c "echo 'export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp' >> /etc/profile.d/protobuf.sh"
 
 clear
+read -p "Clean up sources (you can safely delete all protoc/protobuf zip files and folders) [y/n]? " -n 1 -r
+echo    
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+    rm -rf proto*
+    printf "\nDeleted all files and folders starting with proto*\n"
+else
+    printf "\nYou should remove those files to save space.\n"
+fi
+printf "\nDone\n\n"
+
 printf "\n\n\nReboot to load ProtoBuf\n\n\n"
 
