@@ -1,22 +1,18 @@
 # People-Counter
-This program count incoming and outcoming people, who crooss by hall. 
-  I find many examples in video, how count people who crossing hall or doors, but didn`t find examples code. I decided
-write little program, which been counting incoming and outcoming people.
-  I use OpenCV and Python 2.7
-  So, begining you need install all dependensies:
-  
-   pip install --trusted-host pypi.python.org -r requirements.txt
 
-   Use "import" for importing this library in project
-   
-   For running program write in command line 
-   #python PeopleCounterMain.py
-   
-   If you want chenge video or set stream from rtsp camera change line
-   camera = cv2.VideoCapture("test2.mp4") # set here your video
-   
-   This example use mechanism computer the absolute difference between the current frame and
-   first frame, so I compare two frame and if chenges exist i find where. If area bigest more than 
- 1200 I draw rectange around object which been chenged, if less than contour is too small, ignore it.
+This is an exploratory project for people/pedestrian detection using tensorflow's object detection API.
 
-  
+### Installing libraries:
+You may need to install certain libraries to optimally run the implementation. I've provided the following in the `sources` directory:
+1. OpenCV installation (build from source) `bash sources/buildOpenCV.sh`
+1. Protobuf 3.6.0 (build from source) 
+    * `bash sources/installProtobuf_p1.sh`
+    * `reboot`
+    * `bash sources/installProtobuf_p2.sh`
+
+
+### TRT Optimization:
+I've built a TensorRT Optimized graph of the `ssd_mobilenet_v2_coco` in the `data/ssd_inception_v2_coco_trt.pb`.  
+You can directly import this graph as you would on tensorflow with GFile. 
+This was meant to be deployed on a Jetson platform.
+

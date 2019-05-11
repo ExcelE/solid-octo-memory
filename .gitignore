@@ -2,3 +2,5 @@ venv/
 .vscode/
 *.pyc
 *.mp4
+proto*/
+*.zip

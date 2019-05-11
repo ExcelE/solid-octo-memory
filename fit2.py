@@ -2,7 +2,6 @@ from PIL import Image
 import sys, cv2
 import os
 import urllib
-import tensorflow.contrib.tensorrt as trt
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
@@ -10,8 +9,6 @@ import matplotlib.patches as patches
 import tensorflow as tf
 import numpy as np
 import time
-from tf_trt_models.detection import download_detection_model, build_detection_graph
-
 ###
 
 PATH_TO_CKPT = 'data/ssd_inception_v2_coco_trt.pb'
