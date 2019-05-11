@@ -4,3 +4,4 @@ venv/
 *.mp4
 proto*/
 *.zip
+tf_trt_models/

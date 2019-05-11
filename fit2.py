@@ -9,9 +9,11 @@ import matplotlib.patches as patches
 import tensorflow as tf
 import numpy as np
 import time
+
+import tensorflow.contrib.tensorrt as trt
 ###
 
-PATH_TO_CKPT = 'data/ssd_inception_v2_coco_trt.pb'
+PATH_TO_CKPT = 'data/frozen_inference_graph.pb'
 trt_graph = tf.GraphDef()
 with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
     serialized_graph = fid.read()
@@ -19,7 +21,7 @@ with tf.gfile.GFile(PATH_TO_CKPT, 'rb') as fid:
 
 tf_config = tf.ConfigProto()
 tf_config.gpu_options.allow_growth = True
-tf_config.gpu_options.per_process_gpu_memory_fraction = 0.4
+# tf_config.gpu_options.per_process_gpu_memory_fraction = 0.4
 
 tf_sess = tf.Session(config=tf_config)
 
@@ -35,6 +37,7 @@ tf_num_detections = tf_sess.graph.get_tensor_by_name('num_detections:0')
 
 cap = cv2.VideoCapture('rtsp://192.168.1.191:8554/unicast')
 
+
 while True:
 
     ret, frame = cap.read()
@@ -43,17 +46,20 @@ while True:
         print("Unable to open stream")
         break
 
-    image_resized = np.array(frame.resize((300, 300)))
-    # scores, boxes, classes, num_detections = tf_sess.run([tf_scores, tf_boxes, tf_classes, tf_num_detections], feed_dict={
-    #     tf_input: image_resized[None, ...]
-    # })
+    image_np_expanded = np.expand_dims(frame, axis=0)
 
-    # boxes = boxes[0] # index by 0 to remove batch dimension
-    # scores = scores[0]
-    # classes = classes[0]
-    # num_detections = num_detections[0]
+    # image_resized = cv2.resize(frame, (300, 300), interpolation = cv2.INTER_LINEAR)
+    scores, boxes, classes, num_detections = tf_sess.run([tf_scores, tf_boxes, tf_classes, tf_num_detections], feed_dict={
+        tf_input: image_np_expanded
+        # tf_input: image_resized[None, ...]
+    })
 
-    # print(classes)
+    boxes = boxes[0] # index by 0 to remove batch dimension
+    scores = scores[0]
+    classes = classes[0]
+    num_detections = num_detections[0]
+
+    print(classes[0])
 
     # cv2.imshow('object detection', cv2.resize(frame, (800,600)))
     cv2.imshow('object detection', frame)
