@@ -23,7 +23,11 @@ export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
 cd protobuf-3.6.1/
 ./autogen.sh
 ./configure
-make
+
+NUM_CPU=$(nproc)
+
+make -j$(($NUM_CPU - 1))
+
 make check
 sudo make install
 
@@ -40,14 +44,36 @@ sudo make install
 
 # Refresh shared library cache
 sudo ldconfig
-
+cd ..
 
 # Check the updated version
 echo "Verfiy version number - again ?"
 protoc --version
 
-# reboot -- then do part two
-echo "reboot -- then do part two"
+# # reboot -- then do part two
+# echo "reboot -- then do part two"
 
+cd protobuf-3.6.1/python/
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp
 
+# Fix setup.py to force compilation with c++11 standard
+echo "Fixing setup.py to force c++11 standard"
+
+sed -i '205s/if v:.*/#if v:/' setup.py
+sed -i "206s/  extra_compile_args.append('-std=c++11')/#  extra_compile_args.append('-std=c++11')/" setup.py
+sed -i "207s/elif os.getenv('KOKORO_BUILD_NUMBER') or os.getenv('KOKORO_BUILD_ID'):/#elif os.getenv('KOKORO_BUILD_NUMBER') or os.getenv('KOKORO_BUILD_ID'):/" setup.py
+sed -i "208s/  extra_compile_args.append('-std=c++11')/extra_compile_args.append('-std=c++11')/" setup.py
+echo "Done"
+
+# Build, test and install
+sudo apt-get -y install python3-dev
+python3 setup.py build --cpp_implementation
+python3 setup.py test --cpp_implementation
+sudo python3 setup.py install --cpp_implementation
+
+# Make the cpp backend a default one when user logs in
+sudo sh -c "echo 'export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=cpp' >> /etc/profile.d/protobuf.sh"
+
+clear
+printf "\n\n\nReboot to load ProtoBuf\n\n\n"
 
