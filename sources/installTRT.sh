@@ -19,14 +19,27 @@ CHECK_TF=$(pip3 freeze | grep tensorflow)
 
 if [ -z "$CHECK_TF" ]
 then
-      printf "\nCould not verify if tensorflow is installed. Check manually!"
+      printf "\n[❌]Could not verify if tensorflow is installed. Check manually!"
 else
-      printf "\nVerified install."
+      printf "\n[✅] Verified install.\n"
 fi
 
-git clone --recursive https://github.com/NVIDIA-Jetson/tf_trt_models.git
-cd tf_trt_models
+if [[ -d tf_trt_models/ && -d tf_trt_models/third_party/models/research/object_detection  ]]
+then
+      printf "\n[✅ ] Directory present. Will skip cloning TRT modules\n"      
+else
+      printf "\n[❌ ]Currently not present! Will clone\n"
+      git clone --recursive https://github.com/NVIDIA-Jetson/tf_trt_models.git
+      cd tf_trt_models
+      ./install.sh python3
+fi
 
-./install.sh python3
+# Exporting object detection module
 
-rm -rf tf_trt_models/
+if grep -Fxq "export PYTHONPATH=\$PYTHONPATH:$PWD/tf_trt_models/third_party/models/research:$PWD/tf_trt_models/third_party/models/research/slim" ~/.bashrc
+then
+    printf "\nNo need to edit bash\n"
+else
+    printf "\nNeed to edit bash\n"
+    echo "export PYTHONPATH=\$PYTHONPATH:$PWD/tf_trt_models/third_party/models/research:$PWD/tf_trt_models/third_party/models/research/slim" >> ~/.bashrc
+fi

@@ -9,6 +9,8 @@ You may need to install certain libraries to optimally run the implementation. I
     * `bash sources/installProtobuf_p1.sh`
     * `reboot`
     * `bash sources/installProtobuf_p2.sh`
+1. Installing TensorRT Library with Models API (Required for Object Detection API):
+    * `bash sources/installTRT.sh`
 
 
 ### TRT Optimization:
